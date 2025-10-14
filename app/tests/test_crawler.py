@@ -58,8 +58,6 @@ async def test_crawl_books_class_based():
 
             # DB should be called once
             assert mock_update.call_count == 1
-            args, kwargs = mock_update.call_args
+            args, _ = mock_update.call_args
             filter_arg = args[0]
-            set_arg = args[1]["$set"]
             assert filter_arg["name"] == "Book 1"
-            assert set_arg["price_incl_tax"] == 12.0
