@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
@@ -11,7 +11,7 @@ class Book(BaseModel):
     price_incl_tax: float
     availability: str
     num_reviews: int
-    image_url: HttpUrl
+    image_url: str
     rating: str
-    source_url: HttpUrl
+    source_url: str
     crawl_timestamp: datetime

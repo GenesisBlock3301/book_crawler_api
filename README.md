@@ -45,3 +45,10 @@ python -m crawler.crawler
 [//]: # (GET /changes)
 
 [//]: # (```)
+
+Use case:
+Selectolax—written in C, memory efficient around < 10% memory efficient than BeautifulSoup, Async support.
+Slowapi-- Native, redis backed and async support.
+Motor—Official MongoDB async driver, async support.
+
+

@@ -1,6 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from crawler.crawler import crawl_books
-from scheduler.detector import detect_changes
+from app.crawler.crawler import crawl_books
+from app.scheduler.detector import detect_changes
 import asyncio
 
 scheduler = BackgroundScheduler()

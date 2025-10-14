@@ -8,3 +8,4 @@ APScheduler==3.11.0
 fastapi-limiter==0.1.6
 pytest==8.4.2
 pydantic-settings==2.11.0
+selectolax==0.4.0
