@@ -7,11 +7,11 @@ from app.api.deps import verify_api_key
 from app.serializers import serialize_book
 from app.utils import paginate
 
-router = APIRouter(dependencies=[Depends(verify_api_key),
+books_router = APIRouter(dependencies=[Depends(verify_api_key),
                                  Depends(RateLimiter(times=100, seconds=3600))])
 
 
-@router.get("/")
+@books_router.get("/")
 async def get_books(
         category: str = None,
         min_price: float = 0,
@@ -24,7 +24,7 @@ async def get_books(
     return await paginate(books_collection, query, skip, limit)
 
 
-@router.get("/{book_id}")
+@books_router.get("/{book_id}")
 async def get_book(book_id: str):
     book = await books_collection.find_one({"_id": ObjectId(book_id)})
     return serialize_book(book) if book else (

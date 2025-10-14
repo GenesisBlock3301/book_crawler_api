@@ -42,7 +42,7 @@ python -m crawler.crawler
 [//]: # (GET /books/{book_id})
 
 [//]: # ()
-[//]: # (GET /changes)
+[//]: # (GET /changes)[README.md](README.md)
 
 [//]: # (```)
 
@@ -50,5 +50,10 @@ Use case:
 Selectolax—written in C, memory efficient around < 10% memory efficient than BeautifulSoup, Async support.
 Slowapi-- Native, redis backed and async support.
 Motor—Official MongoDB async driver, async support.
+
+# (Pytest)
+pytest-asyncio → for async tests
+aioresponses → to mock aiohttp requests
+asynctest → to mock async DB calls
 
 
