@@ -1,2 +1,47 @@
-# book_crawler_api
-Async FastAPI crawler for books.toscrape.com with MongoDB, scheduler &amp; change detection.
+# Book Crawler API
+
+A scalable, async web crawling and monitoring system for `books.toscrape.com` built with **FastAPI**, **MongoDB**, and **APScheduler**.
+
+### Features
+- Async crawler using `aiohttp`  
+- MongoDB storage with deduplication  
+- Daily scheduler for change detection  
+- REST API with authentication & rate limiting  
+- OpenAPI docs & Postman collection
+
+---
+
+### 🚀 Setup
+
+```
+git clone https://github.com/yourusername/book_crawler_api.git
+cd book_crawler_api
+cp .env.example .env
+docker-compose up -d
+```
+### Run API
+```
+uvicorn api.main:app --reload
+```
+Run scheduler:
+```
+python -m scheduler.scheduler
+```
+Run Crawler
+```aiignore
+python -m crawler.crawler
+```
+
+[//]: # (Example API Endpoints)
+
+[//]: # (```)
+
+[//]: # (GET /books?category=Travel&min_price=20)
+
+[//]: # ()
+[//]: # (GET /books/{book_id})
+
+[//]: # ()
+[//]: # (GET /changes)
+
+[//]: # (```)
