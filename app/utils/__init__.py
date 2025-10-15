@@ -1,5 +1,9 @@
 from .pagination import paginate
+from .enums import BookSortEnum
+from .config import settings
 
 __all__ = (
-    'paginate'
+    'paginate',
+    'BookSortEnum',
+    'settings'
 )

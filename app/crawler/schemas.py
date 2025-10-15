@@ -15,3 +15,4 @@ class Book(BaseModel):
     rating: str
     source_url: str
     crawl_timestamp: datetime
+    row_html: str

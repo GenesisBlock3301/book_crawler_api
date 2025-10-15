@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 from fastapi_limiter.depends import RateLimiter
 from bson import ObjectId
 
 from app.db import books_collection
 from app.api.deps import verify_api_key
 from app.serializers import serialize_book
-from app.utils import paginate
+from app.utils import paginate, BookSortEnum
 
 books_router = APIRouter(dependencies=[Depends(verify_api_key),
-                                 Depends(RateLimiter(times=100, seconds=3600))])
+                                       Depends(RateLimiter(times=100, seconds=3600))])
 
 
 @books_router.get("/")
@@ -17,11 +17,15 @@ async def get_books(
         min_price: float = 0,
         max_price: float = 9999,
         skip: int = 0,
-        limit: int = 10):
+        limit: int = 10,
+        sort_by: BookSortEnum | None = Query(None, description="Sort by: rating, price, reviews")
+):
     query = {"price_incl_tax": {"$gte": min_price, "$lte": max_price}}
     if category:
         query["category"] = category
-    return await paginate(books_collection, query, skip, limit)
+
+    sort_field = sort_by.value if sort_by else None
+    return await paginate(books_collection, query, skip, limit, sort_field)
 
 
 @books_router.get("/{book_id}")

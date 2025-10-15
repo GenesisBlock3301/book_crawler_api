@@ -7,6 +7,7 @@ from app.crawler.schemas import Book
 class BookParser:
     def __init__(self, html: str, url: str, category: str):
         self.tree = HTMLParser(html)
+        self.html = html
         self.url = url
         self.category = category
     @staticmethod
@@ -90,4 +91,5 @@ class BookParser:
             rating=rating,
             source_url=self.url,
             crawl_timestamp=datetime.now(),
+            row_html=str(self.html),
         )

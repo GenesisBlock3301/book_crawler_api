@@ -1,6 +1,6 @@
 import aiohttp
 import asyncio
-from app.crawler.parser import parse_book_page
+from app.crawler.parser import BookParser
 from app.db import books_collection
 from app.utils.config import settings
 from app.utils.logger import logger
@@ -9,10 +9,11 @@ from urllib.parse import urljoin
 
 
 class BookCrawler:
-    def __init__(self, base_url=settings.BASE_URL, session=None):
+    def __init__(self, base_url=settings.BASE_URL, session=None, book_parser=None):
         self.base_url = base_url
         self.session = session
         self.logger = logger
+        self.parser = book_parser
 
     async def fetch(self, url: str):
         for _ in range(3):
@@ -51,7 +52,7 @@ class BookCrawler:
         book_html = await self.fetch(url)
         if not book_html:
             return
-        book_data = parse_book_page(book_html, url, "Unknown")
+        book_data = self.parser(book_html, url, "Unknown").parse_book()
         await books_collection.update_one(
             {"name": book_data.name},
             {"$set": book_data.model_dump(mode="json")},
@@ -61,12 +62,17 @@ class BookCrawler:
 
     def _next_page(self, tree):
         next_btn = tree.css_first(".next a")
-        return urljoin(self.base_url, next_btn.attributes.get("href")) if next_btn else None
+        if not next_btn:
+            return None
+        href = next_btn.attributes.get("href", "")
+        if 'catalogue/' not in href:
+            href = f"catalogue/{next_btn.attributes.get('href').lstrip('./')}"
+        return urljoin(self.base_url, href) if next_btn else None
 
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        crawler = BookCrawler(session=session)
+        crawler = BookCrawler(session=session, book_parser=BookParser)
         await crawler.crawl()
 
 

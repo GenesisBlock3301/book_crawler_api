@@ -14,7 +14,6 @@ if __name__ == "__main__":
     scheduler.start()
     print("Scheduler started. Press Ctrl+C to exit.")
     try:
-        # Keep the main thread alive to let the scheduler run
         import time
         while True:
             time.sleep(1)

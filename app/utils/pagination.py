@@ -2,15 +2,20 @@ from math import ceil
 from app.serializers import serialize_book
 
 
-async def paginate(collection, query: dict, skip: int = 0, limit: int = 10):
+async def paginate(collection, query: dict, skip: int = 0, limit: int = 10, sort_field: str = None):
     total = await collection.count_documents(query)
-    items = await collection.find(query).skip(skip).limit(limit).to_list(length=limit)
+    cursor = collection.find(query)
+    if sort_field:
+        # membership check with runtime O(1)
+        sort_order = -1 if sort_field in {"rating", "num_reviews", "price_incl_tax"} else 1
+        cursor = cursor.sort(sort_field, sort_order)
+
+    items = await cursor.skip(skip).limit(limit).to_list(length=limit)
     items = [serialize_book(book) for book in items]
 
     total_pages = ceil(total / limit) if total else 0
     page = (skip // limit) + 1 if total else 1
 
-    # Ensure skip/page do not exceed total items
     if skip >= total:
         items = []
         page = total_pages if total_pages > 0 else 1
