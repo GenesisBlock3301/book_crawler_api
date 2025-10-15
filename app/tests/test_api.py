@@ -3,7 +3,6 @@ from httpx import AsyncClient
 from starlette import status
 
 from app.db import books_collection
-from app.main import app
 from app.utils import settings
 
 test_books = [
@@ -43,6 +42,11 @@ test_books = [
     }
 ]
 
+TEST_BASE_URL = "http://localhost:8000"
+TEST_API_KEY = "supersecretkey123"
+EXPECTED_SUCCESS_STATUS = status.HTTP_200_OK
+FICTION_CATEGORY = "A Light in the Attic"
+
 
 @pytest.fixture(autouse=True)
 async def setup_db():
@@ -55,16 +59,28 @@ async def setup_db():
 
 @pytest.mark.asyncio
 async def test_get_books_no_filter():
+    headers = {"x-api-key": TEST_API_KEY}
+    endpoint = "/api/books"
     async with AsyncClient(base_url=settings.BASE_URL) as ac:
-        response = await ac.get("/api/books", headers={"x-api-key": "supersecretkey123"})
+        response = await ac.get(endpoint, headers=headers)
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert all(book["name"] == "A Light in the Attic" for book in data)
 
+
+
 @pytest.mark.asyncio
 async def test_get_books_category_filter():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.get("/books/?category=Fiction", headers={"x-api-key": "supersecretkey123"})
-    assert response.status_code == 200
-    data = response.json()
-    assert all(book["category"] == "Fiction" for book in data)
+    headers = {"x-api-key": TEST_API_KEY}
+    endpoint = f"/books/?category={FICTION_CATEGORY}"
+
+    async with AsyncClient(base_url=TEST_BASE_URL) as ac:
+        response = await ac.get(endpoint, headers=headers)
+
+    assert response.status_code == EXPECTED_SUCCESS_STATUS
+
+    books_data = response.json()
+    all_books_match_category = all(
+        book["category"] == FICTION_CATEGORY for book in books_data
+    )
+    assert all_books_match_category

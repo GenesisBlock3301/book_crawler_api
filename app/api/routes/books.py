@@ -20,7 +20,7 @@ async def get_books(
         limit: int = 10,
         sort_by: BookSortEnum | None = Query(None, description="Sort by: rating, price, reviews")
 ):
-    query = {"price_incl_tax": {"$gte": min_price, "$lte": max_price}}
+    query: dict = {"price_incl_tax": {"$gte": min_price, "$lte": max_price}}
     if category:
         query["category"] = category
 
