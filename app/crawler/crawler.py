@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import aiohttp
 import asyncio
 from app.crawler.parser import BookParser
@@ -27,8 +29,21 @@ class BookCrawler:
         self.logger.error(f"Failed to fetch {url}")
         return None
 
+    @staticmethod
+    async def get_last_page():
+        state = await books_collection.find_one({"_id": "book_crawler"})
+        return state.get("last_page") if state else None
+
+    @staticmethod
+    async def save_last_page(next_page):
+        await books_collection.update_one(
+            {"_id": "book_crawler"},
+            {"$set": {"last_page": next_page, "last_updated": datetime.now()}},
+            upsert=True,
+        )
+
     async def crawl(self):
-        next_page = self.base_url
+        next_page = self.get_last_page() or self.base_url
         while next_page:
             html = await self.fetch(next_page)
             if not html:
@@ -49,8 +64,13 @@ class BookCrawler:
         return links
 
     async def _process_book(self, url):
+        exists = await books_collection.find_one({"url": url})
+        if exists:
+            self.logger.info(f"Skipping {url} as it already exists")
+            return
         book_html = await self.fetch(url)
         if not book_html:
+            self.logger.error(f"Failed to fetch {url}")
             return
         book_data = self.parser(book_html, url, "Unknown").parse_book()
         await books_collection.update_one(
