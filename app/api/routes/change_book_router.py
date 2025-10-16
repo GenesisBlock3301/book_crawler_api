@@ -1,13 +1,15 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException, status
 from fastapi_limiter.depends import RateLimiter
 
-from app.db import changes_collection
-from app.utils import paginate, BookSortEnum
+from app.services import ChangeBookService
+from app.utils import BookSortEnum
+from app.api.deps import get_change_book_service
 
 changes_router = APIRouter(dependencies=[Depends(RateLimiter(times=100, seconds=3600))])
 
 @changes_router.get("/")
 async def get_changes(
+        service: ChangeBookService = Depends(get_change_book_service),
         category: str = "",
         min_price: float = 0,
         max_price: float = 9999,
@@ -15,8 +17,12 @@ async def get_changes(
         limit: int = 10,
         sort_by: BookSortEnum | None = Query(None, description="Sort by: rating, price, reviews")
 ):
-    query: dict = {"price_incl_tax": {"$gte": min_price, "$lte": max_price}}
-    if category:
-        query["category"] = category
     sort_field = sort_by.value if sort_by else None
-    return await paginate(changes_collection, query, skip, limit, sort_field)
+    return await service.get_books(category, min_price, max_price, skip, limit, sort_field)
+
+@changes_router.get("/{book_id}")
+async def get_change(book_id: str, service: ChangeBookService = Depends(get_change_book_service)):
+    book = service.get_book_by_id(book_id)
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+    return book

@@ -1,7 +1,7 @@
 from selectolax.parser import HTMLParser
 from datetime import datetime
 from urllib.parse import urljoin
-from app.schemas.schemas import Book
+from app.schemas import Book
 
 
 class BookParser:

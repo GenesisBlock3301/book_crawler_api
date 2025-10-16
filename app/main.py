@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
-from app.utils.config import settings
+from app.utils import settings
 from app.api.routes import books_router, changes_router, users_router
 from app.db import init_db
 

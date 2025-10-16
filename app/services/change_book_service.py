@@ -1,10 +1,10 @@
-from app.db.repositories.book_repository import BookRepository
+from app.db import ChangeBookRepository
 from app.serializers import serialize_book
 
 
-class BookService:
+class ChangeBookService:
 
-    def __init__(self, repo: BookRepository):
+    def __init__(self, repo: ChangeBookRepository):
         self.repo = repo
 
     async def get_book_by_id(self, book_id: str) -> dict|None:

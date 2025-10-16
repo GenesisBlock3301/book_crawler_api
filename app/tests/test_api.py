@@ -1,10 +1,8 @@
 import aiohttp
 import pytest
 from starlette import status
-from bson import ObjectId
 from app.db import books_collection
 from app.utils import settings
-from app.serializers import serialize_book
 
 test_books = [
     {

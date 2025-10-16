@@ -44,16 +44,26 @@ class BookCrawler:
         )
 
     async def crawl(self):
-        next_page = self.get_last_page() or self.base_url
+        next_page = await self.get_last_page() or self.base_url
         while next_page:
+            self.logger.info(f"Crawling page {next_page}...")
             html = await self.fetch(next_page)
             if not html:
                 break
+
             tree = HTMLParser(html)
             book_links = self._extract_book_links(tree)
+
             for url in book_links:
                 await self._process_book(url)
+
             next_page = self._next_page(tree)
+
+            await self.save_last_page(next_page)
+
+            if not next_page:
+                self.logger.info("No more pages to crawl.")
+                break
 
     def _extract_book_links(self, tree):
         links = []

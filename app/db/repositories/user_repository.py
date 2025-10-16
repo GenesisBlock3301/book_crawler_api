@@ -1,6 +1,8 @@
 from app.db.database import users_collection
-from app.schemas.user_schemas import User
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from app.schemas import User
 
 class UserRepository:
     def __init__(self, collection=users_collection):
@@ -9,7 +11,7 @@ class UserRepository:
     async def get(self, username: str):
         return await self.collection.find_one({"username": username})
 
-    async def create(self, user: User):
+    async def create(self, user: "User"):
         await self.collection.insert_one(user.model_dump(mode="json"))
         return user
 
