@@ -1,7 +1,6 @@
 import aiohttp
 import pytest
-from starlette import status
-from app.db import books_collection
+from fastapi import status
 from app.utils import settings
 
 test_books = [
@@ -46,6 +45,7 @@ FICTION_CATEGORY = "A Light in the Attic"
 
 @pytest.fixture(autouse=True)
 async def setup_db():
+    from app.db import books_collection
     await books_collection.insert_many(test_books)
     yield
     await books_collection.delete_many({})
