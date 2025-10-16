@@ -2,10 +2,9 @@ from fastapi import APIRouter, Depends, Query
 from fastapi_limiter.depends import RateLimiter
 
 from app.db import changes_collection
-from app.api.deps import verify_api_key
 from app.utils import paginate, BookSortEnum
 
-changes_router = APIRouter(dependencies=[Depends(verify_api_key), Depends(RateLimiter(times=100, seconds=3600))])
+changes_router = APIRouter(dependencies=[Depends(RateLimiter(times=100, seconds=3600))])
 
 @changes_router.get("/")
 async def get_changes(

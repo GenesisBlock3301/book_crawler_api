@@ -13,5 +13,7 @@ pytest==8.4.2
 pytest-asyncio==1.2.0
 aioresponses==0.7.8
 asynctest==0.13.0
-pydantic==2.12.1
-redis==7.0.0b
+pydantic==2.12.2
+redis==7.0.0b3
+pymongo==4.15.3
+starlette==0.48.0

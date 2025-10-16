@@ -1,15 +1,14 @@
+import aiohttp
 import pytest
-from httpx import AsyncClient
 from starlette import status
-
+from bson import ObjectId
 from app.db import books_collection
 from app.utils import settings
+from app.serializers import serialize_book
 
 test_books = [
     {
-        "_id": {
-            "$oid": "68ef592950ca2000ff19b018"
-        },
+        "_id": "68ef592950ca2000ff19b018",
         "name": "Chase Me (Paris Nights #2)",
         "availability": "In stock (19 available)",
         "category": "Unknown",
@@ -24,9 +23,7 @@ test_books = [
         "source_url": "https://books.toscrape.com/catalogue/chase-me-paris-nights-2_977/index.html"
     },
     {
-        "_id": {
-            "$oid": "68ef592250ca2000ff19b001"
-        },
+        "_id": "68ef592250ca2000ff19b001",
         "name": "A Light in the Attic",
         "availability": "In stock (22 available)",
         "category": "Unknown",
@@ -48,39 +45,71 @@ EXPECTED_SUCCESS_STATUS = status.HTTP_200_OK
 FICTION_CATEGORY = "A Light in the Attic"
 
 
+
 @pytest.fixture(autouse=True)
 async def setup_db():
-    # insert data into db for testing
     await books_collection.insert_many(test_books)
     yield
-    # after testing, delete all data from db
     await books_collection.delete_many({})
 
 
 @pytest.mark.asyncio
 async def test_get_books_no_filter():
     headers = {"x-api-key": TEST_API_KEY}
-    endpoint = "/api/books"
-    async with AsyncClient(base_url=settings.BASE_URL) as ac:
-        response = await ac.get(endpoint, headers=headers)
-    assert response.status_code == status.HTTP_200_OK
-    data = response.json()
-    assert all(book["name"] == "A Light in the Attic" for book in data)
+    endpoint = "api/books"
 
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{settings.HOST}/{endpoint}", headers=headers) as response:
+            assert response.status == status.HTTP_200_OK
+            data = await response.json()
+    assert any(book["name"] == "A Light in the Attic" for book in data['results'])
 
 
 @pytest.mark.asyncio
-async def test_get_books_category_filter():
+async def test_get_book_by_id_found():
+    test_book = test_books[1]
+    book_id = test_book["_id"]
     headers = {"x-api-key": TEST_API_KEY}
-    endpoint = f"/books/?category={FICTION_CATEGORY}"
+    endpoint = f"api/books/{book_id}"
 
-    async with AsyncClient(base_url=TEST_BASE_URL) as ac:
-        response = await ac.get(endpoint, headers=headers)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{settings.HOST}/{endpoint}", headers=headers) as response:
+            assert response.status == status.HTTP_200_OK
+            data = await response.json()
 
-    assert response.status_code == EXPECTED_SUCCESS_STATUS
+    assert data['name'] == test_book['name']
+    assert data['price_incl_tax'] == test_book['price_incl_tax']
+    assert data['num_reviews'] == test_book['num_reviews']
+    assert data['rating'] == test_book['rating']
+    assert data['image_url'] == test_book['image_url']
+    assert data['source_url'] == test_book['source_url']
+    assert data['row_html'] == test_book['row_html']
 
-    books_data = response.json()
-    all_books_match_category = all(
-        book["category"] == FICTION_CATEGORY for book in books_data
-    )
-    assert all_books_match_category
+
+@pytest.mark.asyncio
+async def test_get_book_by_id_not_found():
+    non_existent_id = "68ef592950ca2000ff19b118"
+    headers = {"x-api-key": TEST_API_KEY}
+    endpoint = f"api/books/{non_existent_id}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{settings.HOST}/{endpoint}", headers=headers) as response:
+            assert response.status == status.HTTP_404_NOT_FOUND
+            data = await response.json()
+
+    assert data["detail"] == "Book not found"
+
+
+@pytest.mark.asyncio
+async def test_internal_server_error_to_get_book_by_id():
+    headers = {"x-api-key": TEST_API_KEY}
+    non_existent_id = "nonexistentid1234567890"
+    endpoint = f"api/books/{non_existent_id}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{settings.HOST}/{endpoint}", headers=headers) as response:
+            assert response.status == status.HTTP_400_BAD_REQUEST
+            data = await response.json()
+    assert data["detail"] == "Invalid book ID"
+
+

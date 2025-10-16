@@ -1,15 +1,16 @@
 from selectolax.parser import HTMLParser
 from datetime import datetime
 from urllib.parse import urljoin
-from app.crawler.schemas import Book
+from app.schemas.schemas import Book
 
 
 class BookParser:
-    def __init__(self, html: str, url: str, category: str):
+    def __init__(self, html: str, url: str, category: str = ""):
         self.tree = HTMLParser(html)
         self.html = html
         self.url = url
         self.category = category
+
     @staticmethod
     def parse_price(value: str) -> float | None:
         try:

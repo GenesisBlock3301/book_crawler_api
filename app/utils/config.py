@@ -6,8 +6,9 @@ class Settings(BaseSettings):
     MONGO_URL: str
     DB_NAME: str
     BASE_URL: str
-    API_KEY: str
+    ADMIN_API_KEY: str
     REDIS_URL: str
+    HOST: str
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parent.parent.parent /".env"

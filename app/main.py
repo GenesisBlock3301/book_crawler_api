@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
 from app.utils.config import settings
-from app.api.routes import books_router, changes_router
+from app.api.routes import books_router, changes_router, users_router
+from app.db import init_db
 
 
 REDIS_INIT_MESSAGE = "Redis limiter initialized..."
@@ -24,6 +25,7 @@ async def cleanup_redis(redis):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await init_db()
     redis = await initialize_redis()
     yield
     await cleanup_redis(redis)
@@ -31,5 +33,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Book Crawler API", lifespan=lifespan)
 
-app.include_router(books_router, prefix="/books", tags=["Books"])
-app.include_router(changes_router, prefix="/changes", tags=["Changes"])
+app.include_router(books_router, prefix="/api/books", tags=["Books"])
+app.include_router(changes_router, prefix="/api/changes", tags=["Changes"])
+app.include_router(users_router, prefix="/api/users", tags=["Users"])

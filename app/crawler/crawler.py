@@ -1,13 +1,14 @@
-from datetime import datetime
-
 import aiohttp
 import asyncio
+from datetime import datetime
+from fastapi import status
+from selectolax.parser import HTMLParser
+from urllib.parse import urljoin
+
 from app.crawler.parser import BookParser
 from app.db import books_collection
 from app.utils.config import settings
-from app.utils.logger import logger
-from selectolax.parser import HTMLParser
-from urllib.parse import urljoin
+from app.utils import logger
 
 
 class BookCrawler:
@@ -21,7 +22,7 @@ class BookCrawler:
         for _ in range(3):
             try:
                 async with self.session.get(url, timeout=10) as resp:
-                    if resp.status == 200:
+                    if resp.status == status.HTTP_200_OK:
                         return await resp.text()
             except Exception as e:
                 self.logger.warning(f"Retry due to: {e}")
