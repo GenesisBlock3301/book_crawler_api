@@ -34,7 +34,7 @@ async def get_user_by_username(
     user = await service.get_user_by_username(username)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    user = User(user)
+    user = User(**user)
     return user.model_dump(mode='json')
 
 

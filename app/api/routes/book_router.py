@@ -24,7 +24,7 @@ async def get_books(
 
 @books_router.get("/{book_id}")
 async def get_book(book_id: str, service: BookService = Depends(get_book_service)):
-    book = service.get_book_by_id(book_id)
+    book = await service.get_book_by_id(book_id)
     if not book:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
     return book
