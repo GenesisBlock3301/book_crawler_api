@@ -1,7 +1,7 @@
-import secrets
+import secrets, asyncio
 from datetime import datetime
 
-from fastapi import Header, HTTPException, status
+from fastapi import Header, HTTPException, status, Request
 from app.utils.config import settings
 from app.db import users_collection
 
@@ -29,3 +29,11 @@ async def verify_user_api_key(x_api_key: str = Header(...)):
         upsert=True,
     )
     return user
+
+
+async def user_rate_limit_identifier(request: Request):
+    await asyncio.sleep(0)
+    api_key = request.headers.get("x-api-key")
+    if not api_key:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="API key missing")
+    return f"user:{api_key}"

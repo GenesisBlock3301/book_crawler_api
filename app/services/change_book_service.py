@@ -13,7 +13,7 @@ class ChangeBookService:
             return None
         return serialize_book(book)
 
-    async def get_books(
+    async def get_changes(
             self,
             category: str | None = None,
             min_price: float = 0,

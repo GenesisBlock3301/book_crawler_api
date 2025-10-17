@@ -12,7 +12,7 @@ def get_book_service(repo: BookRepository = Depends(get_book_repository)) -> Boo
 def get_change_book_repository() -> ChangeBookRepository:
     return ChangeBookRepository()
 
-def get_change_book_service(repo: ChangeBookRepository = Depends(get_book_repository)) -> ChangeBookService:
+def get_change_book_service(repo: ChangeBookRepository = Depends(get_change_book_repository)) -> ChangeBookService:
     return ChangeBookService(repo)
 
 
