@@ -1,5 +1,6 @@
-from .crawler import BookCrawler
+from .crawler import BookCrawler, main
 
 __all__ = (
-    'BookCrawler'
+    'BookCrawler',
+    'main'
 )

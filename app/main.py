@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
 from app.utils import settings
-from app.api.routes import books_router, changes_router, users_router
+from app.api.routes import books_router, changes_router, users_router, crawler_router
 from app.db import init_db
 
 
@@ -36,3 +36,4 @@ app = FastAPI(title="Book Crawler API", lifespan=lifespan)
 app.include_router(books_router, prefix="/api/books", tags=["Books"])
 app.include_router(changes_router, prefix="/api/changes", tags=["Changes"])
 app.include_router(users_router, prefix="/api/users", tags=["Users"])
+app.include_router(crawler_router, prefix="/api/crawler", tags=["Crawler"])
