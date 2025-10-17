@@ -12,5 +12,5 @@ __all__ = (
     'logger',
     'verify_user_api_key',
     'verify_admin_api_key',
-    'generate_api_key'
+    'generate_api_key',
 )

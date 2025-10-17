@@ -1,6 +1,6 @@
 import requests
 
-url = "http://localhost:8000/books"
+url = "http://localhost:8000/api/books"
 headers = {"x-api-key": "supersecretkey123"}
 
 for i in range(105):

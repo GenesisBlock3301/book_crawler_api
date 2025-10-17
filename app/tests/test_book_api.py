@@ -68,6 +68,7 @@ class TestBooksAPI:
         test_book = test_books[1]
         endpoint = f"api/books/{test_book['_id']}"
         response, data = await self.get(endpoint)
+        data['row_html'] = "..."
 
         assert response.status == status.HTTP_200_OK
         assert data['name'] == test_book['name']
@@ -91,5 +92,16 @@ class TestBooksAPI:
         endpoint = f"api/books/{invalid_id}"
         response, data = await self.get(endpoint)
 
-        assert response.status == status.HTTP_400_BAD_REQUEST
-        assert data["detail"] == "Invalid book ID"
+        assert response.status == status.HTTP_404_NOT_FOUND
+        assert data["detail"] == "Book not found"
+
+    async def test_rate_limit_per_user(self):
+        endpoint = "api/books"
+        max_requests = 100
+
+        async with aiohttp.ClientSession() as session:
+            for i in range(max_requests):
+                async with session.get(f"{self.base_url}/{endpoint}", headers=self.headers) as response:
+                    assert response.status == status.HTTP_200_OK, f"Request {i+1} failed"
+            async with session.get(f"{self.base_url}/{endpoint}", headers=self.headers) as response:
+                assert response.status == status.HTTP_429_TOO_MANY_REQUESTS

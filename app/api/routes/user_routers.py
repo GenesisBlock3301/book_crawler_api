@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Body
 from fastapi.params import Depends
+from bson import ObjectId
 
 from app.utils import verify_admin_api_key, generate_api_key
 from app.schemas import User, UserUpdate
@@ -8,7 +9,11 @@ from app.services import UserService
 
 users_router = APIRouter(dependencies=[Depends(verify_admin_api_key)])
 
-
+def serialize_user(user: User) -> dict:
+    user = user.copy()  # avoid mutating the original
+    if "_id" in user and isinstance(user["_id"], ObjectId):
+        user["_id"] = str(user["_id"])
+    return user
 @users_router.post("/", status_code=status.HTTP_200_OK)
 async def create_api_key_for_user(
         service: UserService = Depends(get_user_service),
@@ -47,8 +52,10 @@ async def update_user(
     user = await service.get_user_by_username(username)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found for update")
-
+    api_key = generate_api_key()
     update_data = user_update.model_dump(exclude_unset=True)
+    update_data.pop('username', None)
+    update_data["api_key"] = api_key
     if not update_data:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No fields to update")
 
@@ -56,7 +63,7 @@ async def update_user(
     updated_user = await service.get_user_by_username(username)
     return {
         "message": "User updated successfully",
-        "user": updated_user
+        "user": serialize_user(updated_user)
     }
 
 
