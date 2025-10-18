@@ -5,10 +5,14 @@ import asyncio
 
 scheduler = BackgroundScheduler()
 
+async def daily_job_async():
+    await BookCrawler().crawl()
+    await detect_changes()
+
 @scheduler.scheduled_job('cron', hour=0)
 def daily_job():
-    asyncio.run(BookCrawler().crawl())
-    asyncio.run(detect_changes())
+    loop = asyncio.get_event_loop()
+    loop.create_task(daily_job_async())
 
 if __name__ == "__main__":
     scheduler.start()
