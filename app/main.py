@@ -5,19 +5,12 @@ from fastapi_limiter import FastAPILimiter
 from app.db import init_db
 from app.utils import logger
 from app.config import RedisCache
-from app.api.routes import (books_router, changes_router, users_router, crawler_router,
-                            report_router)
-
+from app.api.routes import (
+    books_router, changes_router, users_router, crawler_router, report_router
+)
 
 REDIS_INIT_MESSAGE = "Redis limiter initialized..."
 REDIS_CLOSE_MESSAGE = "Redis connection closed..."
-
-async def initialize_redis():
-    """Initialize Redis connection and rate limiter."""
-    redis = await RedisCache().get_client()
-    await FastAPILimiter.init(redis)
-    logger.info(REDIS_INIT_MESSAGE)
-    return redis
 
 
 async def cleanup_redis(redis_client: aioredis.Redis):
@@ -26,10 +19,13 @@ async def cleanup_redis(redis_client: aioredis.Redis):
         await redis_client.close()
         logger.info(REDIS_CLOSE_MESSAGE)
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
     redis = await RedisCache().get_client()
+    await FastAPILimiter.init(redis)
+    logger.info(REDIS_INIT_MESSAGE)
     yield
     await cleanup_redis(redis)
 

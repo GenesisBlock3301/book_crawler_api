@@ -1,7 +1,7 @@
 from app.db.database import users_collection
 from typing import TYPE_CHECKING
 from .cache import cache
-from app.utils import logger
+from app.utils import logger, paginate
 
 if TYPE_CHECKING:
     from app.schemas import User
@@ -32,18 +32,21 @@ class UserRepository:
 
     async def delete(self, username: str):
         result = await self.collection.delete_one({"username": username})
+        logger.info(f"Deleted user: {username}")
         return result.deleted_count
 
     @staticmethod
     async def list(
-            query: dict,
+            query=None,
             skip: int = 0,
             limit: int = 10,
             sort_field: str | None = None,
     ):
+        if query is None:
+            query = {}
         key = cache.generate_cache_key(
             "user_list",
-            query=query,
+            query=query | {'query': 'query'},
             skip=skip,
             limit=limit,
             sort_field=sort_field
@@ -52,6 +55,6 @@ class UserRepository:
         if cached:
             logger.info("User list found in cache")
             return cached
-        users = await users_collection.find(query).skip(skip).limit(limit).sort(sort_field)
+        users = await paginate(users_collection, query, skip, limit, sort_field)
         if users: await cache.set(key, users)
         return users

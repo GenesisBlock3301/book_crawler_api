@@ -10,8 +10,8 @@ from app.services import UserService
 users_router = APIRouter(dependencies=[Depends(verify_admin_api_key)])
 
 
-def serialize_user(user: User) -> User:
-    user = user.model_copy()  # avoid mutating the original
+def serialize_user(user: dict) -> dict:
+    user = user.copy()  # avoid mutating the original
     if "_id" in user and isinstance(user["_id"], ObjectId):
         user["_id"] = str(user["_id"])
     return user

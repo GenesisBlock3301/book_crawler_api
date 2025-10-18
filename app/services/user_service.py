@@ -24,5 +24,5 @@ class UserService:
             limit: int = 100,
             sort_by: str | None = None
     ) -> User:
-        return await self.repo.list(skip=skip, limit=limit, sort_field=sort_by)
+        return await self.repo.list(query=None, skip=skip, limit=limit, sort_field=sort_by)
 

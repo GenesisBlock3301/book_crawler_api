@@ -1,8 +1,12 @@
 from fastapi import APIRouter, Query, Depends
-from app.services import generate_report_service
-from app.utils import verify_admin_api_key
+from fastapi_limiter.depends import RateLimiter
 
-report_router = APIRouter(dependencies=[Depends(verify_admin_api_key)])
+from app.services import generate_report_service
+from app.utils import verify_admin_api_key, user_rate_limit_identifier
+
+report_router = APIRouter(dependencies=[Depends(verify_admin_api_key),
+                                       Depends(RateLimiter(times=100, seconds=3600,
+                                                           identifier=user_rate_limit_identifier))])
 
 
 @report_router.get("/", summary="Generate daily change report (JSON or CSV)")
