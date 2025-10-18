@@ -2,10 +2,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
-from app.api.routes import books_router, changes_router, users_router, crawler_router
 from app.db import init_db
 from app.utils import logger
 from app.config import RedisCache
+from app.api.routes import (books_router, changes_router, users_router, crawler_router,
+                            report_router)
 
 
 REDIS_INIT_MESSAGE = "Redis limiter initialized..."
@@ -39,3 +40,4 @@ app.include_router(books_router, prefix="/api/books", tags=["Books"])
 app.include_router(changes_router, prefix="/api/changes", tags=["Changes"])
 app.include_router(users_router, prefix="/api/users", tags=["Users"])
 app.include_router(crawler_router, prefix="/api/crawler", tags=["Crawler"])
+app.include_router(report_router, prefix="/api/report", tags=["Report"])

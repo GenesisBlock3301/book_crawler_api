@@ -1,5 +1,5 @@
 import secrets
-from datetime import datetime
+from datetime import datetime, date, timezone
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.config import settings
@@ -36,3 +36,25 @@ async def init_db():
         logger.info("[DB INIT] Created admin user.")
     else:
         logger.info("[DB INIT] Admin user already exists.")
+
+    demo_change = await changes_collection.find_one({})
+    if not demo_change:
+        book = await books_collection.find_one({})
+        if not book:
+            book = {
+                "name": "Demo Book",
+                "availability": "In stock",
+                "crawl_timestamp": datetime.now(),
+                "hash": "demo_hash"
+            }
+            result = await books_collection.insert_one(book)
+            book["_id"] = result.inserted_id
+
+        await changes_collection.insert_one({
+            "book_id": book["_id"],
+            "timestamp": datetime.now(),
+            "changes": "Demo modification detected"
+        })
+        logger.info("[DB INIT] Added demo change record to changes_collection.")
+    else:
+        logger.info("[DB INIT] changes_collection already has data.")

@@ -3,7 +3,6 @@ from datetime import datetime
 
 from fastapi import Header, HTTPException, status, Request
 from app.config import settings
-from app.db import users_collection
 
 
 def verify_admin_api_key(x_api_key: str = Header(...)):
@@ -16,6 +15,7 @@ def generate_api_key():
 
 
 async def verify_user_api_key(x_api_key: str = Header(...)):
+    from app.db import users_collection
     user = await users_collection.find_one({"api_key": x_api_key})
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API Key")

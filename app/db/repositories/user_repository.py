@@ -1,6 +1,7 @@
 from app.db.database import users_collection
 from typing import TYPE_CHECKING
 from .cache import cache
+from app.utils import logger
 
 if TYPE_CHECKING:
     from app.schemas import User
@@ -10,7 +11,16 @@ class UserRepository:
         self.collection = collection
 
     async def get(self, username: str):
-        return await self.collection.find_one({"username": username})
+        key = cache.generate_cache_key("user", username=username)
+        cached = await cache.get(key)
+        if cached:
+            logger.info("User found in cache")
+            return cached
+        user = await self.collection.find_one({"username": username})
+        if user:
+            logger.info(f"generate cache key and store user id: {user['_id']}")
+            await cache.set(key, user)
+        return user
 
     async def create(self, user: "User"):
         await self.collection.insert_one(user.model_dump(mode="json"))
@@ -39,7 +49,9 @@ class UserRepository:
             sort_field=sort_field
         )
         cached = await cache.get(key)
-        if cached: return cached
+        if cached:
+            logger.info("User list found in cache")
+            return cached
         users = await users_collection.find(query).skip(skip).limit(limit).sort(sort_field)
         if users: await cache.set(key, users)
         return users

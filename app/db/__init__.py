@@ -2,6 +2,7 @@ from .database import db, changes_collection, books_collection, users_collection
 from .repositories.book_repository import BookRepository
 from .repositories.user_repository import UserRepository
 from .repositories.change_book_repo import ChangeBookRepository
+from .repositories.report_repository import get_books_by_date
 
 
 __all__ = (
@@ -12,5 +13,6 @@ __all__ = (
     'init_db',
     'BookRepository',
     'UserRepository',
-    'ChangeBookRepository'
+    'ChangeBookRepository',
+    'get_books_by_date'
 )
