@@ -3,7 +3,7 @@ import pytest
 import asyncio
 from unittest.mock import patch, AsyncMock
 from fastapi import status
-from app.utils import settings
+from app.config import settings
 
 test_books = [
     {
@@ -31,7 +31,8 @@ class TestChangeBooksAPI:
     base_url = settings.HOST
     headers = {"x-api-key": TEST_API_KEY}
 
-    async def mock_response(self, status_code, json_data):
+    @staticmethod
+    async def mock_response(status_code, json_data):
         await asyncio.sleep(0)
         mock_resp = AsyncMock()
         mock_resp.status = status_code

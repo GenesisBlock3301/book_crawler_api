@@ -2,7 +2,7 @@ import pytest
 import asyncio
 from unittest.mock import patch, AsyncMock
 from fastapi import status
-from app.utils import settings
+from app.config import settings
 
 TEST_API_KEY = "supersecretkey123"
 

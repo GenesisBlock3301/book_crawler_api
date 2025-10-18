@@ -49,7 +49,7 @@ class TestBookCrawler:
 
     @pytest.mark.asyncio
     async def test_get_last_page_exists(self, book_crawler):
-        """Test getting last crawled page when it exists"""
+        """Test getting the last crawled page when it exists"""
         with patch('app.crawler.crawler.books_collection') as mock_collection:
             mock_collection.find_one = AsyncMock(return_value={
                 "_id": "book_crawler",
@@ -61,7 +61,6 @@ class TestBookCrawler:
 
     @pytest.mark.asyncio
     async def test_get_last_page_not_exists(self, book_crawler):
-        """Test getting last page when none exists"""
         with patch('app.crawler.crawler.books_collection') as mock_collection:
             mock_collection.find_one = AsyncMock(return_value=None)
 
@@ -70,7 +69,6 @@ class TestBookCrawler:
 
     @pytest.mark.asyncio
     async def test_save_last_page(self, book_crawler):
-        """Test saving last crawled page"""
         with patch('app.crawler.crawler.books_collection') as mock_collection:
             mock_collection.update_one = AsyncMock()
 
@@ -99,7 +97,6 @@ class TestBookCrawler:
 
     @pytest.mark.asyncio
     async def test_process_book_already_exists(self, book_crawler):
-        """Test processing a book that already exists"""
         with patch('app.crawler.crawler.books_collection') as mock_collection:
             mock_collection.find_one = AsyncMock(return_value={"name": "Existing Book"})
 
@@ -109,7 +106,6 @@ class TestBookCrawler:
 
     @pytest.mark.asyncio
     async def test_process_book_new(self, book_crawler, mock_session):
-        """Test processing a new book"""
         book_html = "<html><h1>New Book</h1><p class='price_color'>£19.99</p></html>"
 
         mock_response = AsyncMock()
@@ -133,7 +129,6 @@ class TestBookCrawler:
                 mock_collection.update_one.assert_called_once()
 
     def test_next_page_exists(self, book_crawler):
-        """Test extracting next page link"""
         html = """
         <html>
             <li class="next"><a href="catalogue/page-2.html">next</a></li>
@@ -147,7 +142,6 @@ class TestBookCrawler:
         assert "page-2.html" in next_page
 
     def test_next_page_not_exists(self, book_crawler):
-        """Test when there's no next page"""
         html = "<html></html>"
         from selectolax.parser import HTMLParser
         tree = HTMLParser(html)

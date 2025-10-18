@@ -10,7 +10,5 @@ async def test_daily_job_async():
         mock_crawler_instance = MockCrawler.return_value
         mock_crawler_instance.crawl = AsyncMock()
         await daily_job_async()
-
-        # Assertions
         mock_crawler_instance.crawl.assert_called_once()
         mock_detect.assert_called_once()
