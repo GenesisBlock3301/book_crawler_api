@@ -14,22 +14,6 @@ A **production-grade**, scalable web crawling and monitoring system for [books.t
 - ✅ **Rate Limiting** using Redis-backed `slowapi`
 - ✅ **Admin/Main User** system for user management
 - ✅ **Comprehensive Test Suite** with `pytest-asyncio`
-
----
-
-## 📋 Table of Contents
-
-1. [Tech Stack](#-tech-stack)
-2. [Project Structure](#-project-structure)
-3. [Prerequisites](#-prerequisites)
-4. [Installation & Setup](#-installation--setup)
-5. [Running the Application](#-running-the-application)
-6. [API Documentation](#-api-documentation)
-7. [Testing](#-testing)
-8. [Deployment](#-deployment)
-9. [Troubleshooting](#-troubleshooting)
-10. [Support & License](#-support--license)
-
 ---
 
 ## 🛠 Tech Stack
@@ -116,7 +100,20 @@ book_crawler_api/
 
 ---
 
-## 🚀 Installation & Setup
+
+## 🐳 Deployment(Easy way to run)
+
+### Docker Compose (Full Stack) 
+Must download docker and docker compose before run below commands.
+
+```
+docker compose build
+docker compose up
+```
+Then started server on port 8000.
+https://localhost:8000/docs
+
+## 🚀 Installation & Setup(Manual Setup for run)
 
 ### 1. Clone the Repository
 
@@ -166,17 +163,7 @@ REDIS_URL=redis://redis:6379
 HOST=http://localhost:8000
 ```
 
-### 5. Start Infrastructure Services
-
-```bash
-docker-compose up -d
-```
-
-Verify services:
-
-```bash
-docker-compose ps
-```
+Note: run above command from root folder of project.
 
 ---
 
@@ -407,22 +394,7 @@ pytest app/tests/test_change_book_api.py -v
 pytest app/tests/test_schedular.py -v
 ```
 
-Test coverage:
-
-Open report:
-
 ---
-
-## 🐳 Deployment
-
-### Docker Compose (Full Stack)
-
-```
-docker compose build
-docker compose up
-```
-Then started server on port 8000.
-https://localhost:8000/docs
 
 Services started:
 
