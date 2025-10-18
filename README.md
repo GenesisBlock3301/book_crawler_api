@@ -16,6 +16,34 @@ A **production-grade**, scalable web crawling and monitoring system for [books.t
 - ✅ **Comprehensive Test Suite** with `pytest-asyncio`
 ---
 
+
+### User Roles & Access Control
+
+The system supports two types of API key–based users with distinct permissions:
+
+#### Admin User
+
+Has a predefined API key configured in .env (ADMIN_API_KEY).
+
+Can create, update, and delete users.
+
+Has full access to all endpoints including user management routes.
+
+Can also access and perform all general book, change, and report operations.
+
+#### Regular User
+
+Created only by an admin API key–based user.
+
+Can access book listings, book details, change tracking, report generation, and trigger crawling.
+
+Cannot create, update, or delete users.
+
+Access is controlled via their unique API key generated during user creation.
+
+This ensures secure API-level role separation, where administrative tasks remain strictly under admin control, while general users can only view or trigger non-destructive operations.
+
+
 ## 🛠 Tech Stack
 
 | Component                 | Technology             | Purpose                         |
@@ -222,14 +250,6 @@ This runs daily at midnight to:
 ---
 
 ## 🔑 API Documentation
-
-### Authentication
-
-All endpoints require an **API key**:
-
-```
--H "x-api-key: YOUR_API_KEY"
-```
 
 #### Admin: Create Users
 
