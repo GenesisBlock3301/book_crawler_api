@@ -2,7 +2,7 @@ import secrets, asyncio
 from datetime import datetime
 
 from fastapi import Header, HTTPException, status, Request
-from app.utils.config import settings
+from app.config import settings
 from app.db import users_collection
 
 

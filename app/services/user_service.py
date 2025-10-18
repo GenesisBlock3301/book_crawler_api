@@ -18,3 +18,11 @@ class UserService:
     async def delete_user(self, username: str) -> int:
         return await self.repo.delete(username)
 
+    async def get_all_user(
+            self,
+            skip: int = 0,
+            limit: int = 100,
+            sort_by: str | None = None
+    ) -> User:
+        return await self.repo.list(skip=skip, limit=limit, sort_field=sort_by)
+

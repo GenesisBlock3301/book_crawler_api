@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from app.utils.config import settings
+from app.config import settings
 from app.utils import logger
 from app.utils import UserRoleEnum
 

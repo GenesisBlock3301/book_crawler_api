@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 
 from app.crawler.parser import BookParser
 from app.db import books_collection
-from app.utils.config import settings
+from app.config import settings
 from app.utils import logger
 
 

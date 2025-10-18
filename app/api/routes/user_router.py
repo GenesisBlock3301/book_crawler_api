@@ -16,8 +16,7 @@ def serialize_user(user: User) -> User:
         user["_id"] = str(user["_id"])
     return user
 
-
-@users_router.post("/", status_code=status.HTTP_200_OK)
+@users_router.post("/create", status_code=status.HTTP_200_OK)
 async def create_api_key_for_user(
         service: UserService = Depends(get_user_service),
         username: str = Body(..., embed=True)
@@ -26,13 +25,22 @@ async def create_api_key_for_user(
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
     api_key = generate_api_key()
-    user = User(username=username, api_key=api_key)
+    user = User(username=username, api_key=api_key, active=True)
     await service.create_user(user)
     return {
         "message": "User & API key created successfully",
         "user": user.model_dump(mode='json')
     }
 
+
+@users_router.get("/", status_code=status.HTTP_200_OK)
+async def get_all_users(
+        service: UserService = Depends(get_user_service),
+        skip: int = 0,
+        limit: int = 100,
+        sort_by: str = "username"
+):
+    return await service.get_all_user(skip, limit, sort_by)
 
 @users_router.get("/{username}", status_code=status.HTTP_200_OK)
 async def get_user_by_username(
