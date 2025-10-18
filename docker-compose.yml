@@ -21,7 +21,7 @@ services:
       - api
       - mongo
       - redis
-    command: python -m scheduler.scheduler
+    command: python -m app.scheduler.scheduler
     restart: always
 
   mongo:
@@ -37,18 +37,6 @@ services:
     container_name: book_redis
     ports:
       - "6379:6379"
-
-  init-crawler:
-    build: .
-    container_name: book_init_crawler
-    env_file:
-      - .env
-    depends_on:
-      - mongo
-      - redis
-    command: >
-      sh -c "python -m app.crawler.run_once && echo 'Initial scraping complete!'"
-    restart: "no"
 
 volumes:
   mongo_data:
