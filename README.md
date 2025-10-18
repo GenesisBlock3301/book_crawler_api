@@ -360,6 +360,19 @@ GET /api/changes
 GET /api/changes/{change_id}
 ```
 
+#### 3. Crawling all books
+
+```
+GET /api/crawler/
+```
+If the crawler fails on a certain page, you can restart it from the last saved page using this endpoint to continue'
+crawling all remaining books.
+
+#### 4. Generate report
+
+```
+GET /api/report/
+```
 ---
 
 ### Rate Limiting
@@ -381,13 +394,13 @@ Status Code: `429 TOO MANY REQUESTS`
 
 Run all tests:
 
-```bash
+```
 pytest
 ```
 
 Run specific test files:
 
-```bash
+```
 pytest app/tests/test_crawler.py -v
 pytest app/tests/test_book_api.py -v
 pytest app/tests/test_change_book_api.py -v
@@ -396,15 +409,7 @@ pytest app/tests/test_schedular.py -v
 
 Test coverage:
 
-```bash
-pytest --cov=app --cov-report=html
-```
-
 Open report:
-
-```bash
-open htmlcov/index.html
-```
 
 ---
 
@@ -412,9 +417,12 @@ open htmlcov/index.html
 
 ### Docker Compose (Full Stack)
 
-```bash
-docker-compose up --build
 ```
+docker compose build
+docker compose up
+```
+Then started server on port 8000.
+https://localhost:8000/docs
 
 Services started:
 
@@ -422,87 +430,3 @@ Services started:
 * Redis
 * FastAPI (port 8000)
 * Scheduler
-
-### Production Environment Variables
-
-```env
-MONGO_URI=mongodb://mongo:27017
-REDIS_URL=redis://redis:6379
-HOST=https://your-domain.com
-ADMIN_API_KEY=<strong-random-key>
-```
-
-### Manual Deployment (VM/Cloud)
-
-Example `systemd` service:
-
-```ini
-[Unit]
-Description=Book Crawler API
-After=network.target
-
-[Service]
-Type=simple
-User=www-data
-WorkingDirectory=/opt/book_crawler_api
-Environment="PATH=/opt/book_crawler_api/.venv/bin"
-ExecStart=/opt/book_crawler_api/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Enable and start service:
-
-```bash
-sudo systemctl enable book-api
-sudo systemctl start book-api
-```
-
----
-
-## ❗ Troubleshooting
-
-* **ModuleNotFoundError: No module named 'app'**
-  Run from project root.
-
-* **MongoDB Connection Error**
-  Ensure MongoDB is running: `docker-compose ps`
-
-* **Redis Connection Error**
-  Test Redis: `docker exec -it book_crawler_api_redis_1 redis-cli PING`
-
-* **Scheduler Not Detecting Changes**
-  Check if scheduler is running: `ps aux | grep scheduler`
-  Trigger manually: `python -m app.scheduler.detector`
-
----
-
-## 📞 Support & License
-
-* **Email**: [sudipto@filerskeepers.co](mailto:sudipto@filerskeepers.co)
-* **GitHub Issues**: [Open Issue](https://github.com/yourusername/book_crawler_api/issues)
-* **License**: MIT - see [LICENSE](LICENSE) file
-
----
-
-## 🙏 Acknowledgments
-
-* [Books to Scrape](https://books.toscrape.com)
-* [FastAPI](https://fastapi.tiangolo.com/)
-* [MongoDB](https://www.mongodb.com/)
-* [Selectolax](https://github.com/rushter/selectolax)
-
----
-
-**Happy Crawling! 🚀**
-
-```
-
----
-
-If you want, I can also **create a shorter, “quick-start” version** suitable for GitHub so users can set up and run the API in **under 5 minutes**, without going through the full detailed guide. This is great for attracting more users.  
-
-Do you want me to do that?
-```
