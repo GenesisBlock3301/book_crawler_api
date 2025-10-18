@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, BackgroundTasks
 from fastapi_limiter.depends import RateLimiter
 from app.crawler import main
 
-from app.utils import user_rate_limit_identifier, logger, verify_admin_api_key
+from app.utils import user_rate_limit_identifier, logger, verify_user_api_key
 
-crawler_router = APIRouter(dependencies=[Depends(verify_admin_api_key),
+crawler_router = APIRouter(dependencies=[Depends(verify_user_api_key),
                                        Depends(RateLimiter(times=100, seconds=3600,
                                                            identifier=user_rate_limit_identifier))])
 

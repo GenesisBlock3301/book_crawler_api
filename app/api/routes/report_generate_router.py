@@ -2,9 +2,9 @@ from fastapi import APIRouter, Query, Depends
 from fastapi_limiter.depends import RateLimiter
 
 from app.services import generate_report_service
-from app.utils import verify_admin_api_key, user_rate_limit_identifier
+from app.utils import user_rate_limit_identifier, verify_user_api_key
 
-report_router = APIRouter(dependencies=[Depends(verify_admin_api_key),
+report_router = APIRouter(dependencies=[Depends(verify_user_api_key),
                                        Depends(RateLimiter(times=100, seconds=3600,
                                                            identifier=user_rate_limit_identifier))])
 
