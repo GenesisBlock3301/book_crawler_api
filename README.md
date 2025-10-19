@@ -149,7 +149,7 @@ https://localhost:8000/docs
 ### 1. Clone the Repository
 
 ```
-git clone https://github.com/yourusername/book_crawler_api.git
+git clone https://github.com/GenesisBlock3301/book_crawler_api.git
 cd book_crawler_api
 ````
 
@@ -215,7 +215,7 @@ API docs:
 * **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
 * **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
-### 3. Run the Scheduler (Change Detection)
+### Run the Scheduler (Change Detection)
 
 ```
 python -m app.scheduler.scheduler
@@ -230,7 +230,7 @@ This runs daily at midnight to:
 ---
 
 ## API Documentation
-
+### Crawl Endpoints
 #### Crawling all books
 
 ```
@@ -241,43 +241,36 @@ crawling all remaining books.
 
 Note: This endpoint runs in background.
 
-
+### User Endpoints
 #### Admin: Create Users
 
 The first admin user is auto-created from `.env`.
-
 **Create a new user**:
 
 ```
-POST /api/users
-Content-Type: application/json
-x-api-key: <ADMIN_API_KEY>
-
-{
-  "username": "developer"
-}
+POST /api/users/create
 ```
-
-Response:
-
-```json
-{
-  "message": "User & API key created successfully",
-  "user": {
-    "username": "developer",
-    "api_key": "a3f8c2e1d5b9f7a2c4e6d8f0b2a4c6e8",
-    "is_active": true,
-    "role": "user",
-    "created_at": "2025-01-15T10:30:00Z"
-  }
-}
+**Get all users**:
+```aiignore
+GET /api/users/
 ```
-
+**Get Username By Username**
+```aiignore
+GET /api/users/{username}
+```
+**Update User**
+```aiignore
+PUT /api/users/{username}
+```
+**Delete User**
+```aiignore
+DELELE /api/users/{username}
+```
 ---
 
 ### Book Endpoints
 
-#### Get All Books
+**Get All Books**
 
 ```
 GET /api/books
@@ -295,68 +288,31 @@ GET /api/books
 | `page`      | int    | Page number            | `1`                          |
 | `limit`     | int    | Items per page         | `20`                         |
 
-**Example Request:**
 
-```
-curl -X GET "http://localhost:8000/api/books?category=Travel&min_price=20&max_price=50&rating=4&sort_by=price&page=1&limit=10" \
-  -H "x-api-key: YOUR_API_KEY"
-```
-
-**Response:**
-
-```json
-{
-  "total": 47,
-  "page": 1,
-  "limit": 10,
-  "results": [
-    {
-      "_id": "68ef592250ca2000ff19b001",
-      "name": "A Light in the Attic",
-      "description": "It's hard to imagine a world without...",
-      "category": "Poetry",
-      "price": {
-        "including_tax": 51.77,
-        "excluding_tax": 51.77
-      },
-      "availability": "In stock (22 available)",
-      "num_reviews": 0,
-      "image_url": "https://books.toscrape.com/media/cache/...",
-      "rating": 3,
-      "source_url": "https://books.toscrape.com/catalogue/...",
-      "crawl_timestamp": "2025-01-15T08:00:00Z"
-    }
-  ]
-}
-```
-
-#### Get Single Book by ID
+**Get Single Book by ID**
 
 ```
 GET /api/books/{book_id}
 ```
 
----
-
 ### Change Tracking Endpoints
 
-#### Get All Changes
+**Get All Changes**
 
 ```
 GET /api/changes
 ```
-
-#### Get Change by ID
-
+**Get Change by ID**
 ```
 GET /api/changes/{change_id}
 ```
-#### Generate report
-
+### Generate report
 ```
 GET /api/report/
 ```
 ---
+
+### 
 
 ### Rate Limiting
 
