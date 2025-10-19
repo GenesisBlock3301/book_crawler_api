@@ -1,19 +1,19 @@
-# Book Crawler API 📚
+# Book Crawler API
 
 A **production-grade**, scalable web crawling and monitoring system for [books.toscrape.com](https://books.toscrape.com) built with **FastAPI**, **MongoDB**, **Redis**, and **APScheduler**.
 
 ---
 
-## 🌟 Features
+## Features
 
-- ✅ **Async Web Crawler** using `aiohttp` and `selectolax`
-- ✅ **MongoDB Storage** with deduplication and change tracking
-- ✅ **Scheduled Change Detection** via APScheduler
-- ✅ **RESTful API** with OpenAPI documentation
-- ✅ **User Authentication** with API key-based access control
-- ✅ **Rate Limiting** using Redis-backed `slowapi`
-- ✅ **Admin/Main User** system for user management
-- ✅ **Comprehensive Test Suite** with `pytest-asyncio`
+- **Async Web Crawler** using `aiohttp` and `selectolax`
+- **MongoDB Storage** with deduplication and change tracking
+- **Scheduled Change Detection** via APScheduler
+- **RESTful API** with OpenAPI documentation
+- **User Authentication** with API key-based access control
+- **Rate Limiting** using Redis-backed `slowapi`
+- **Admin/Main User** system for user management
+- **Comprehensive Test Suite** with `pytest-asyncio`
 ---
 
 
@@ -36,7 +36,7 @@ The system supports two types of API key–based users with distinct permissions
 This ensures secure API-level role separation, where administrative tasks remain strictly under admin control, while general users can only view or trigger non-destructive operations.
 
 
-## 🛠Tech Stack
+## Tech Stack
 
 | Component                 | Technology             | Purpose                         |
 |---------------------------|------------------------|---------------------------------|
@@ -51,7 +51,7 @@ This ensures secure API-level role separation, where administrative tasks remain
 
 ---
 
-## 📁Project Structure
+## Project Structure
 
 ```
 book_crawler_api/
@@ -112,7 +112,7 @@ book_crawler_api/
 
 ---
 
-## ✅ Prerequisites
+## Prerequisites
 
 - **Python**: 3.10+ (tested on 3.13.5)
 - **Docker & Docker Compose**: For MongoDB and Redis
@@ -121,7 +121,7 @@ book_crawler_api/
 ---
 
 
-## 🐳Deployment(Easy way to run)
+## Deployment(Easy way to run)
 
 ### Docker Compose (Full Stack) 
 
@@ -144,7 +144,7 @@ docker compose up
 Then started the server on port 8000.
 https://localhost:8000/docs
 
-## 🚀Installation & Setup (Manual Setup for run)
+## Installation & Setup (Manual Setup for run)
 
 ### 1. Clone the Repository
 
@@ -162,7 +162,7 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
 ### 3. Install Dependencies
 
-```bash
+```
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
@@ -182,7 +182,7 @@ Note: run the above command from the root folder of a project.
 
 ---
 
-## 🎯Running the Application
+## Running the Application
 
 **Always run commands from the project root** (`book_crawler_api/`).
 
@@ -229,7 +229,18 @@ This runs daily at midnight to:
 
 ---
 
-## 🔑 API Documentation
+## API Documentation
+
+#### Crawling all books
+
+```
+GET /api/crawler/
+```
+If the crawler fails on a certain page, you can restart it from the last saved page using this endpoint to continue
+crawling all remaining books.
+
+Note: This endpoint runs in background.
+
 
 #### Admin: Create Users
 
@@ -266,7 +277,7 @@ Response:
 
 ### Book Endpoints
 
-#### 1. Get All Books
+#### Get All Books
 
 ```
 GET /api/books
@@ -319,7 +330,7 @@ curl -X GET "http://localhost:8000/api/books?category=Travel&min_price=20&max_pr
 }
 ```
 
-#### 2. Get Single Book by ID
+#### Get Single Book by ID
 
 ```
 GET /api/books/{book_id}
@@ -329,27 +340,18 @@ GET /api/books/{book_id}
 
 ### Change Tracking Endpoints
 
-#### 1. Get All Changes
+#### Get All Changes
 
 ```
 GET /api/changes
 ```
 
-#### 2. Get Change by ID
+#### Get Change by ID
 
 ```
 GET /api/changes/{change_id}
 ```
-
-#### 3. Crawling all books
-
-```
-GET /api/crawler/
-```
-If the crawler fails on a certain page, you can restart it from the last saved page using this endpoint to continue
-crawling all remaining books.
-
-#### 4. Generate report
+#### Generate report
 
 ```
 GET /api/report/
@@ -366,12 +368,11 @@ GET /api/report/
   "detail": "Too Many Requests"
 }
 ```
-
 Status Code: `429 TOO MANY REQUESTS`
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Run all tests:
 
