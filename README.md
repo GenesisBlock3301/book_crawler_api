@@ -22,29 +22,21 @@ A **production-grade**, scalable web crawling and monitoring system for [books.t
 The system supports two types of API key–based users with distinct permissions:
 
 #### Admin User
-
-Has a predefined API key configured in .env (ADMIN_API_KEY).
-
-Can create, update, and delete users.
-
-Has full access to all endpoints including user management routes.
-
-Can also access and perform all general book, change, and report operations.
+- Has a predefined API key configured in .env (ADMIN_API_KEY).
+- Can create, update, and delete users.
+- Has full access to all endpoints including user management routes.
+- Can also access and perform all general book, change, and report operations.
 
 #### Regular User
-
-Created only by an admin API key–based user.
-
-Can access book listings, book details, change tracking, report generation, and trigger crawling.
-
-Cannot create, update, or delete users.
-
-Access is controlled via their unique API key generated during user creation.
+- Created only by an admin API key–based user.
+- Can access book listings, book details, change tracking, report generation, and trigger crawling.
+- Cannot create, update, or delete users.
+- Access is controlled via their unique API key generated during user creation.
 
 This ensures secure API-level role separation, where administrative tasks remain strictly under admin control, while general users can only view or trigger non-destructive operations.
 
 
-## 🛠 Tech Stack
+## 🛠Tech Stack
 
 | Component                 | Technology             | Purpose                         |
 |---------------------------|------------------------|---------------------------------|
@@ -59,7 +51,7 @@ This ensures secure API-level role separation, where administrative tasks remain
 
 ---
 
-## 📁 Project Structure
+## 📁Project Structure
 
 ```
 book_crawler_api/
@@ -129,19 +121,30 @@ book_crawler_api/
 ---
 
 
-## 🐳 Deployment(Easy way to run)
+## 🐳Deployment(Easy way to run)
 
 ### Docker Compose (Full Stack) 
-Must download docker and docker compose before run below commands.
+
+Edit `.env` with your settings for containerization:
+```
+MONGO_URL=mongodb://mongo:27017
+DB_NAME=bookstore
+BASE_URL=https://books.toscrape.com
+ADMIN_API_KEY=supersecretkey123
+REDIS_URL=redis://redis:6379
+HOST=http://localhost:8000
+```
+Must download docker and docker compose before run the below commands.
 
 ```
 docker compose build
 docker compose up
 ```
-Then started server on port 8000.
+
+Then started the server on port 8000.
 https://localhost:8000/docs
 
-## 🚀 Installation & Setup(Manual Setup for run)
+## 🚀Installation & Setup (Manual Setup for run)
 
 ### 1. Clone the Repository
 
@@ -164,12 +167,6 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment Variables
-
-```
-cp .env.example .env
-```
-
 Edit `.env` with your settings:
 
 ```
@@ -181,27 +178,17 @@ REDIS_URL=redis://localhost:6379
 HOST=http://localhost:8000
 ```
 
-Edit `.env` with your settings for containerization:
-```
-MONGO_URL=mongodb://mongo:27017
-DB_NAME=bookstore
-BASE_URL=https://books.toscrape.com
-ADMIN_API_KEY=supersecretkey123
-REDIS_URL=redis://redis:6379
-HOST=http://localhost:8000
-```
-
-Note: run above command from root folder of project.
+Note: run the above command from the root folder of a project.
 
 ---
 
-## 🎯 Running the Application
+## 🎯Running the Application
 
 **Always run commands from the project root** (`book_crawler_api/`).
 
 ### 1. Run the Crawler (Initial Setup)
 
-```bash
+```
 python -m app.crawler.crawler
 ```
 
@@ -210,13 +197,6 @@ This will:
 * Crawl all books from `books.toscrape.com`
 * Store data in MongoDB (`books` collection)
 * Save raw HTML snapshots
-
-Expected output:
-
-```
-✓ Crawled 1000 books in 45.3s
-✓ Stored in MongoDB: book_crawler_db.books
-```
 
 ### 2. Start the FastAPI Server
 
@@ -355,12 +335,6 @@ GET /api/books/{book_id}
 GET /api/changes
 ```
 
-**Query Parameters:**
-
-* `page` (int)
-* `limit` (int)
-* `change_type` (string): `price_change`, `new_book`, `availability_change`
-
 #### 2. Get Change by ID
 
 ```
@@ -372,7 +346,7 @@ GET /api/changes/{change_id}
 ```
 GET /api/crawler/
 ```
-If the crawler fails on a certain page, you can restart it from the last saved page using this endpoint to continue'
+If the crawler fails on a certain page, you can restart it from the last saved page using this endpoint to continue
 crawling all remaining books.
 
 #### 4. Generate report
