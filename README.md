@@ -353,3 +353,12 @@ Services started:
 * Redis
 * FastAPI (port 8000)
 * Scheduler
+
+## Screenshots 
+
+### Crawling
+
+![Crawling](crawling.png)
+
+### Scheduler
+![Scheduler](scheduler.png)
