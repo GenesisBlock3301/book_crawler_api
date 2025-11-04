@@ -9,10 +9,11 @@ class Book(BaseModel):
     category: str
     price_excl_tax: float
     price_incl_tax: float
-    availability: str
+    availability: int
     num_reviews: int
     image_url: str
     rating: str
     source_url: str
     crawl_timestamp: datetime
     row_html: str
+    hash: Optional[str] = None

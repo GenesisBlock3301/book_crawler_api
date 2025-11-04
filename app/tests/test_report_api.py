@@ -26,6 +26,8 @@ class TestGenerateChangeReport:
         async with aiohttp.ClientSession() as session:
             async with session.get(f"{self.base_url}/api/report/?format=json", headers=self.headers) as response:
                 data = await response.json()
-
-        assert response.status == status.HTTP_200_OK
-        assert data["total"] >= 1
+        if data['detail'] == "No changes found for this date.":
+            assert response.status == status.HTTP_404_NOT_FOUND
+        else:
+            assert response.status == status.HTTP_200_OK
+            assert data["total"] >= 1

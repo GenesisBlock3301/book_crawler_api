@@ -2,9 +2,12 @@ from app.db import books_collection, changes_collection
 from datetime import datetime
 import hashlib
 
+
 async def detect_changes():
     async for book in books_collection.find({}):
-        new_hash = hashlib.md5(str(book).encode()).hexdigest()
+        book_copy = dict(book)
+        book_copy.pop("hash", None)
+        new_hash = hashlib.md5(str(book_copy).encode()).hexdigest()
         if book.get("hash") != new_hash:
             await changes_collection.insert_one({
                 "book_id": book["_id"],

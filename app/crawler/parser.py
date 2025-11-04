@@ -1,3 +1,5 @@
+import hashlib
+import re
 from selectolax.parser import HTMLParser
 from datetime import datetime
 from urllib.parse import urljoin
@@ -43,9 +45,12 @@ class BookParser:
 
         return price_incl, price_excl, num_reviews
 
-    def parse_availability(self) -> str:
+    def parse_availability(self) -> int:
         node = self.tree.css_first(".availability")
-        return node.text(strip=True) if node else "Unknown"
+        text = node.text(strip=True) if node else "Unknown"
+        match = re.search(r'\d+', text)
+        availability = int(match.group()) if match else None
+        return availability
 
     def parse_rating(self) -> str | None:
         node = self.tree.css_first(".star-rating")
@@ -79,8 +84,7 @@ class BookParser:
         rating = self.parse_rating()
         image_url = self.parse_image()
         description = self.parse_description()
-
-        return Book(
+        book = Book(
             name=name,
             description=description,
             category=self.category,
@@ -92,5 +96,8 @@ class BookParser:
             rating=rating,
             source_url=self.url,
             crawl_timestamp=datetime.now(),
-            row_html=str(self.html),
+            row_html=str(self.html)
         )
+        new_hash = hashlib.md5(str(book).encode()).hexdigest()
+        book.hash = new_hash
+        return book
